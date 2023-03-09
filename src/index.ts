@@ -21,3 +21,38 @@ class Block implements BlockShape {
         return crypto.createHash("sha256").update(toHash).digest("hex");
     }
 }
+
+class Blockchain {
+    private blocks: Block[];
+    constructor() {
+        this.blocks = [];
+    }
+    private getPrevHash() {
+        if (this.blocks.length === 0) return "";
+        return this.blocks[this.blocks.length - 1].hash;
+    }
+    public addBlock(data: string) {
+        const newBlock = new Block(
+            this.getPrevHash(),
+            this.blocks.length + 1,
+            data
+        );
+        this.blocks.push(newBlock);
+    }
+    public getBlocks() {
+        return [...this.blocks];
+    }
+}
+
+const blockchain = new Blockchain();
+
+blockchain.addBlock("First one");
+blockchain.addBlock("Second one");
+blockchain.addBlock("Third one");
+blockchain.addBlock("Fourth one");
+
+// return this.blocks; 경우 해킹당할 수 있음
+// [...this.blocks]; 로 변경했을 경우 이전 block과 연결되지 않음
+blockchain.getBlocks().push(new Block("xxxxx", 11111, "HACKEDDDDDD"));
+
+console.log(blockchain.getBlocks());
